@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Api Documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="stylesheet" type="text/css" href="js/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="js/treegrid/jquery.treegrid.css">
+    <link rel="stylesheet" type="text/css" href="css/jquery.json-viewer.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="css/helper.css">
+    <link rel="stylesheet" type="text/css" href="css/index.css">
+</head>
+
+<body class="fix-header fix-sidebar">
+
+<div id="main-wrapper">
+    <div class="header is_stuck" style="position: fixed; top: 0px; width: 1905px;">
+        <nav class="navbar top-navbar navbar-expand-md navbar-light">
+            <!-- Logo -->
+            <div class="navbar-header">
+                <a class="navbar-brand" href="index.html">
+                    <b><img alt="HSL" class="dark-logo" src="images/logo.png" height="24"></b>
+                    <span>Api Documentation</span>
+                </a>
+            </div>
+            <!-- End Logo -->
+            <div class="navbar-collapse">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active" id="group">
+
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <div class="left-sidebar">
+        <!-- Sidebar scroll-->
+        <div class="scroll-sidebar">
+            <!-- Sidebar navigation-->
+            <nav class="sidebar-nav" id="menu">
+            </nav>
+        </div>
+    </div>
+    <div class="page-wrapper">
+        <div style="height: 1px"></div>
+        <div class="container-fluid" id="content"></div>
+    </div>
+    <!-- footer -->
+    <footer class="footer"> © 2018 All rights reserved. Template designed by <a href="https://www.fun90.com">Fun90</a></footer>
+    <!-- End footer -->
+</div>
+
+<script id="groupTemplate" type="text/template">
+    <select id="groupSel" class="form-control custom-select">
+        {{for groups}}
+        <option data-url="{{:location}}" data-name="default">{{:name}}</option>
+        {{/for}}
+    </select>
+</script>
+
+<script id="menuTemplate" type="text/template">
+    <ul>
+        <li class="active detailMenu" id="apiInfo">
+            <a href="javascript:void(0)">简介</a>
+        </li>
+        {{for tags itemVar="~tag"}}
+        {{if name != "basic-error-controller"}}
+        <li>
+            <a class="collapsed has-arrow" data-toggle="collapse" href="#{{:name}}" aria-expanded="false">
+                {{:name}}
+            </a>
+            <ul class="submenu collapse" id="{{:name}}">
+                {{!--获取tags下面对应的方法--}}
+                {{props ~root.paths itemVar="~path"}}
+                {{!--具体方法--}}
+                {{props prop}}
+                {{if prop.tags[0] == ~tag.name}}
+                <li class="menuLi" title="{{:key}} {{:prop.description}}" path="{{:~path.key}}" method="{{:key}}" operationId="{{:prop.operationId}}">
+                    <a href="javascript:void(0)">
+                        {{:prop.summary}} - {{:key.toUpperCase()}}
+                    </a>
+                </li>
+                {{/if}}
+                {{/props}}
+                {{/props}}
+            </ul>
+        </li>
+        {{/if}}
+        {{/for}}
+    </ul>
+</script>
+
+<script id="apiInfoTemplate" type="text/template">
+    <div class="card">
+        <fieldset class="first">
+            <legend>Api Documentation</legend>
+        </fieldset>
+        <table class="table table-hover table-bordered table-text-center">
+            <tbody>
+            <tr>
+                <th class="active">简介</th>
+                <td style="text-align: left">{{:info.description}}</td>
+            </tr>
+            <tr>
+                <th class="active">作者</th>
+                <td style="text-align: left">{{:info.contact.name}}</td>
+            </tr>
+            <tr>
+                <th class="active">版本</th>
+                <td style="text-align: left">{{:info.version}}</td>
+            </tr>
+            <tr>
+                <th class="active">host</th>
+                <td style="text-align: left">{{:host}}</td>
+            </tr>
+            <tr>
+                <th class="active">服务url</th>
+                <td style="text-align: left">{{:info.termsOfService}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</script>
+
+<script id="apiTemplate" type="text/template">
+    <div id="myTab" class="card tabs-container bg-white box-shadow">
+        <ul class="nav nav-tabs customtab" role="tablist">
+            <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#tab1" role="tab" aria-controls="tab" aria-selected="true">接口说明</a>
+            </li>
+            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab2" role="tab" aria-controls="tab2" aria-selected="true">在线调试</a></li>
+        </ul>
+
+        <div class="tab-content">
+            <div class="tab-pane show active" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
+                <table class="table table-hover table-bordered table-text-center">
+                    <thead>
+                    <tr>
+                        <th colspan="2" style="text-align:center">{{:current.summary}}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th class="active" style="text-align: right;">接口url</th>
+                        <td style="text-align: left"><code>{{:current.path}}</code></td>
+                    </tr>
+                    <tr>
+                        <th class="active" style="text-align: right;">说明</th>
+                        <td style="text-align: left">{{:current.description}}</td>
+                    </tr>
+                    <tr>
+                        <th class="active" style="text-align: right;">请求方式</th>
+                        <td style="text-align: left"><code>{{:current.method}}</code></td>
+                    </tr>
+                    <tr>
+                        <th class="active" style="text-align: right;">consumes</th>
+                        <td style="text-align: left"><code>{{:current.consumes || apidocs.consumes}}</code></td>
+                    </tr>
+                    <tr>
+                        <th class="active" style="text-align: right;">produces</th>
+                        <td style="text-align: left"><code>{{:current.produces || apidocs.produces}}</code></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <fieldset>
+                    <legend>请求参数</legend>
+                </fieldset>
+                <table class="table table-bordered table-hover" id="requestModelTable">
+                    <thead>
+                    <tr>
+                        <th>参数名称</th>
+                        <th>说明</th>
+                        <th>类型</th>
+                        <th>in</th>
+                        <th>是否必须</th>
+                        <th>示例</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{props current.requestParameters}}
+                    <tr class="{{if prop.id}}treegrid-{{:prop.id}}{{/if}} {{if prop.pid !== '0'}}treegrid-parent-{{:prop.pid}}{{/if}}">
+                        <td>{{:prop.name || prop.field}}</td>
+                        <td>{{:prop.description}}</td>
+                        <td>{{:prop.type}}</td>
+                        <td>{{:prop.in}}</td>
+                        <td>{{:prop.required || false}}</td>
+                        <td>{{:prop["x-example"]}}</td>
+                    </tr>
+                    {{/props}}
+                    </tbody>
+                </table>
+                <fieldset>
+                    <legend>响应示例</legend>
+                </fieldset>
+                <div class="json-code-div">
+                    <div class="panel" id="responseSample"></div>
+                </div>
+                <fieldset>
+                    <legend>响应参数</legend>
+                </fieldset>
+                <table class="table table-bordered table-hover" id="responseModelTable">
+                    <thead>
+                    <tr>
+                        <th>参数名称</th>
+                        <th>类型</th>
+                        <th>说明</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{for current.responseProperties}}
+                    <tr class="{{if id}}treegrid-{{:id}}{{/if}} {{if pid !== '0'}}treegrid-parent-{{:pid}}{{/if}}">
+                        <td>{{:field}}</td>
+                        <td>{{:type}}</td>
+                        <td>{{:description}}</td>
+                    </tr>
+                    {{/for}}
+                    </tbody>
+                </table>
+                <fieldset>
+                    <legend>响应状态码</legend>
+                </fieldset>
+                <table class="table table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th>状态码</th>
+                        <th>说明</th>
+                        <th>schema</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{props current.responses}}
+                    <tr>
+                        <td>{{:key}}</td>
+                        <td>{{:prop.description}}</td>
+                        <td>{{if prop.schema}}{{getResponseModelName:prop.schema["$ref"]}}{{/if}}</td>
+                    </tr>
+                    {{/props}}
+                    </tbody>
+                </table>
+            </div>
+            <div class="tab-pane" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
+                <table class="table table-hover table-text-center">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>参数名称</th>
+                        <th>参数值</th>
+                        <th>说明</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="paramBody">
+                    {{props current.parameters}}
+                    <tr>
+                        <td>
+                            <div class="checkbox"><label><input value="" checked="" type="checkbox"></label></div>
+                        </td>
+                        <td>{{:prop.name}}</td>
+                        <td>
+                            {{if prop.in == 'body'}}
+                            <textarea class="form-control parameter-textarea parameter" name="{{:prop.name}}" data-name="{{:prop.name}}" rows="5" parameter="true"
+                                      in="{{:prop.in}}">{{if prop.schema && prop.schema['$ref']}}{{getSampleJson ~root.apidocs prop.schema/}}{{else}}{{:prop['default'] || prop['x-example']}}{{/if}}</textarea>
+                            {{else}}
+                            <input class="form-control p-value parameter" name="{{:prop.name}}" data-name="{{:prop.name}}"
+                                   value="{{:prop['default'] || prop['x-example']}}" in="{{:prop.in}}" parameter="true">
+                            {{/if}}
+                        </td>
+                        <td>{{:prop.description}}</td>
+                        <td>
+                            <button class="btn btn-danger btn-circle btn-lg" type="button"><strong>×</strong></button>
+                        </td>
+                    </tr>
+                    {{/props}}
+                    </tbody>
+                </table>
+                <div class="btn-group send-panel">
+                    <select class="form-control custom-select custom-select2" id="consumeContentType">
+                        {{for current.consumes || apidocs.consumes}}
+                        <option {{if #index == 0}}selected="selected"{{/if}}>{{>#data}}</option>
+                        {{/for}}
+                    </select>
+                    <button type="button" class="btn btn-default">POST</button>
+                    <input id="apiPath" class="form-control" value="{{:current.path}}" type="text">
+                    <button id="btnRequest" class="btn btn-info" type="button" onclick="getData('{{:current.operationId}}', '{{:current.method}}')"> 发 送</button>
+                </div>
+                <div id="json-response-container" class="json-code-div mt-2 hidden">
+                    <div id="json-response" class="panel"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/jsrender.min.js"></script>
+<script type="text/javascript" src="js/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/jquery.slimscroll.js"></script>
+<script type="text/javascript" src="js/jquery.json-viewer.js"></script>
+<script type="text/javascript" src="js/treegrid/jquery.treegrid.min.js"></script>
+<script type="text/javascript" src="js/treegrid/jquery.treegrid.bootstrap3.js"></script>
+<script type="text/javascript" src="js/index.js"></script>
+</body>
+</html>

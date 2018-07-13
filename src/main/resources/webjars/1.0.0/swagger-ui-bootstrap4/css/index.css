@@ -1,0 +1,84 @@
+.footer {
+    /*bottom: 0;*/
+    margin: 0;
+}
+
+.page-wrapper {
+    /*margin-left: 280px;*/
+    margin-top: 60px;
+    padding-bottom: 0;
+}
+
+.sidebar-nav ul li.active a {
+    color: #1976d2;
+    font-weight: 500;
+}
+
+tbody tr td:last-child, thead tr th:last-child {
+    text-align: left;
+}
+
+.alert {
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+
+.glyphicon-plus::before {
+    content: "+";
+}
+
+.glyphicon-minus::before {
+    content: "-";
+}
+
+.json-code-div {
+    background: #ddd;
+    border-radius: 5px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    padding: 10px 25px;
+}
+
+.tab-content {
+    margin-top: 10px;
+}
+
+fieldset {
+    margin: 20px 0 0 0;
+    border: none;
+    border-top: 1px solid #e2e2e2;
+    /*padding: 0;*/
+}
+
+fieldset.first {
+    margin-top: 0;
+}
+
+legend {
+    margin-left: 20px;
+    padding: 0 10px;
+    font-size: 20px;
+    font-weight: 300;
+    width: auto;
+}
+
+.table td, .table th {
+    vertical-align: middle !important;
+}
+
+.send-panel {
+    width: 100%;
+    margin-top: 10px;
+}
+
+#myTab {
+    padding-top: 10px;
+}
+
+.parameter-textarea {
+    height: auto;
+    resize: vertical;
+}
+
+.custom-select2 {
+    height: 42px !important;
+}
