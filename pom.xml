@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.fun90.webjars</groupId>
 	<artifactId>swagger-ui-bootstrap4</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<name>${project.artifactId}</name>
 	<url>https://github.com/fun90/swagger-ui-bootstrap4</url>
 	<description>swagger ui api documentation</description>
@@ -56,6 +56,17 @@
 			<id>release</id>
 			<build>
 				<plugins>
+					<plugin>
+						<groupId>org.sonatype.plugins</groupId>
+						<artifactId>nexus-staging-maven-plugin</artifactId>
+						<version>1.6.3</version>
+						<extensions>true</extensions>
+						<configuration>
+							<serverId>oss</serverId>
+							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+							<autoReleaseAfterClose>true</autoReleaseAfterClose>
+						</configuration>
+					</plugin>
 					<!-- Source -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
